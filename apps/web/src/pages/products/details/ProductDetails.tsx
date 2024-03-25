@@ -1,9 +1,19 @@
+import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import React from 'react';
+import { getProductsDetails } from '../api';
 
 const ProductDetails: React.FC = () => {
   const { slug } = useParams({ strict: false }) as { slug: string };
-  console.log(slug);
+  const { data: productsDetailsResponse } = useQuery({
+    queryKey: ['getProductsDetails', slug],
+    queryFn: () => getProductsDetails(slug),
+    enabled: !!slug,
+  });
+
+  const productDetails = productsDetailsResponse?.Data;
+  console.log(productDetails);
+
   return (
     <section className="w-full max-w-[94rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       <section className="py-12 sm:py-16">
@@ -107,7 +117,7 @@ const ProductDetails: React.FC = () => {
 
             <div className="lg:col-span-2 lg:row-span-2 lg:row-end-2">
               <h1 className="sm: text-2xl font-bold text-gray-900 sm:text-3xl">
-                Afro-Brazillian Coffee
+                {productDetails?.Title}
               </h1>
 
               <div className="mt-5 flex items-center">
