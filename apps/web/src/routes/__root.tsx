@@ -1,9 +1,10 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import NavBar from '../components/NavBar/NavBar';
 
 const RootComponent: React.FC = () => {
   return (
     <>
-      test
+      <NavBar />
       <Outlet />
       {/* <TanStackRouterDevtools /> */}
     </>
