@@ -4,9 +4,9 @@ const NavBar: React.FC = () => {
   return (
     <div>
       <div className="flex flex-wrap place-items-center">
-        <section className="relative mx-auto">
-          <nav className="flex justify-between bg-white text-gray-900 w-screen">
-            <div className="px-5 xl:px-12 py-6 flex w-full items-center">
+        <section className="relative mx-auto w-full px-10">
+          <nav className="flex justify-between bg-white text-gray-900 w-full">
+            <div className="py-6 flex w-full items-center">
               <a className="text-3xl font-bold font-heading" href="#2">
                 Logo Here.
               </a>

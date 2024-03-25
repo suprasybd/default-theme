@@ -2,6 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
 import React from 'react';
 import { getProductsDetails } from '../api';
+import {
+  RichTextRender,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@frontend.suprasy.com/ui';
 
 const ProductDetails: React.FC = () => {
   const { slug } = useParams({ strict: false }) as { slug: string };
@@ -15,7 +22,7 @@ const ProductDetails: React.FC = () => {
   console.log(productDetails);
 
   return (
-    <section className="w-full max-w-[94rem] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+    <section className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       <section className="py-12 sm:py-16">
         <div className="container mx-auto px-4">
           <nav className="flex">
@@ -332,54 +339,19 @@ const ProductDetails: React.FC = () => {
                 </li>
               </ul>
             </div>
-
-            <div className="lg:col-span-3">
-              <div className="border-b border-gray-300">
-                <nav className="flex gap-4">
-                  <a
-                    href="#"
-                    title=""
-                    className="border-b-2 border-gray-900 py-4 text-sm font-medium text-gray-900 hover:border-gray-400 hover:text-gray-800"
-                  >
-                    {' '}
-                    Description{' '}
-                  </a>
-
-                  <a
-                    href="#"
-                    title=""
-                    className="inline-flex items-center border-b-2 border-transparent py-4 text-sm font-medium text-gray-600"
-                  >
-                    Reviews
-                    <span className="ml-2 block rounded-full bg-gray-500 px-2 py-px text-xs font-bold text-gray-100">
-                      {' '}
-                      1,209{' '}
-                    </span>
-                  </a>
-                </nav>
-              </div>
-
-              <div className="mt-8 flow-root sm:mt-12">
-                <h1 className="text-3xl font-bold">Delivered To Your Door</h1>
-                <p className="mt-4">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia
-                  accusantium nesciunt fuga.
-                </p>
-                <h1 className="mt-8 text-3xl font-bold">
-                  From the Fine Farms of Brazil
-                </h1>
-                <p className="mt-4">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
-                  numquam enim facere.
-                </p>
-                <p className="mt-4">
-                  Amet consectetur adipisicing elit. Optio numquam enim facere.
-                  Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                  Dolore rerum nostrum eius facere, ad neque.
-                </p>
-              </div>
-            </div>
           </div>
+          <Tabs defaultValue="description" className="w-full">
+            <TabsList>
+              <TabsTrigger value="description">Description</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
+            </TabsList>
+            <TabsContent value="description" className="w-full">
+              {productDetails?.Description && (
+                <RichTextRender initialVal={productDetails?.Description} />
+              )}
+            </TabsContent>
+            <TabsContent value="reviews">Change your reviews here.</TabsContent>
+          </Tabs>
         </div>
       </section>
     </section>
