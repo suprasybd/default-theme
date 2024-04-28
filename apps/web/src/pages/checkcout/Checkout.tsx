@@ -35,7 +35,7 @@ import {
   AccordionTrigger,
 } from '@frontend.suprasy.com/ui';
 import { CartItem } from '@web/components/Modals/Cart/Cart';
-import { getShippingMethods } from './api';
+import { getDevliveryMethods, getShippingMethods } from './api';
 
 const formSchema = z.object({
   FirstName: z.string().min(2).max(50),
@@ -58,7 +58,13 @@ const Checkout = () => {
     queryFn: () => getShippingMethods(),
   });
 
+  const { data: deliveryMethodsResponse } = useQuery({
+    queryKey: ['getDevliveryMethods'],
+    queryFn: () => getDevliveryMethods(),
+  });
+
   const shippingMethods = shippingMethodsResponse?.Data;
+  const deliveryMethods = deliveryMethodsResponse?.Data;
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
@@ -117,6 +123,7 @@ const Checkout = () => {
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
                       <Input
+                        className="py-5"
                         FormError={!!form.formState.errors.FirstName}
                         placeholder="First name"
                         {...field}
@@ -135,6 +142,7 @@ const Checkout = () => {
                     <FormLabel>Last Name</FormLabel>
                     <FormControl>
                       <Input
+                        className="py-5"
                         FormError={!!form.formState.errors.LastName}
                         placeholder="Last name"
                         {...field}
@@ -155,6 +163,7 @@ const Checkout = () => {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
+                      className="py-5"
                       FormError={!!form.formState.errors.Email}
                       placeholder="Email"
                       {...field}
@@ -174,6 +183,7 @@ const Checkout = () => {
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
                     <Input
+                      className="py-5"
                       FormError={!!form.formState.errors.Phone}
                       placeholder="Phone"
                       {...field}
@@ -193,6 +203,7 @@ const Checkout = () => {
                   <FormLabel>Address</FormLabel>
                   <FormControl>
                     <Input
+                      className="py-7"
                       FormError={!!form.formState.errors.Address}
                       placeholder="Address Example - Dhaka, Mirpur 10, Road #2 , House 29"
                       {...field}
@@ -207,12 +218,12 @@ const Checkout = () => {
             {shippingMethods && shippingMethods.length && (
               <RadioGroup
                 defaultValue={shippingMethods[0].Id.toString()}
-                className="border border-gray-200 rounded-md w-full max-w-[350px] block"
+                className="border border-gray-200 rounded-md w-full  block"
               >
                 {shippingMethods.map((method) => (
                   <Label
                     htmlFor={method.Id.toString()}
-                    className="p-3 w-full !my-0 block  max-w-[350px] bg-white  hover:cursor-pointer border-b border-gray-200"
+                    className="p-3 rounded-md py-5 w-full !my-0 block  bg-white  hover:cursor-pointer border-b border-gray-200"
                   >
                     <div className="flex gap-[7px]">
                       <RadioGroupItem
@@ -222,6 +233,38 @@ const Checkout = () => {
                       />
                       <div className="flex w-full justify-between">
                         <h3>{method.Area}</h3>
+                        <p>
+                          {method.Cost !== 0 && <>{formatPrice(method.Cost)}</>}
+                          {method.Cost === 0 && 'Free'}
+                        </p>
+                      </div>
+                    </div>
+                  </Label>
+                ))}
+              </RadioGroup>
+            )}
+
+            <h1 className="text-2xl font-medium mb-3">Delivery Method</h1>
+            {deliveryMethods && deliveryMethods.length && (
+              <RadioGroup
+                defaultValue={deliveryMethods[0].Id.toString()}
+                className="border border-gray-200 rounded-md w-full block"
+              >
+                {deliveryMethods.map((method) => (
+                  <Label
+                    htmlFor={`${method.Id.toString()}delivery`}
+                    className="p-3 rounded-md py-5 w-full !my-0 block   bg-white  hover:cursor-pointer border-b border-gray-200"
+                  >
+                    <div className="flex gap-[7px]">
+                      <RadioGroupItem
+                        className=" !my-0 "
+                        value={`${method.Id.toString()}delivery`}
+                        id={`${method.Id.toString()}delivery`}
+                      />
+                      <div className="flex w-full justify-between">
+                        <h3 className="tracking-wide !leading-5">
+                          {method.DeliveryMethod}
+                        </h3>
                         <p>
                           {method.Cost !== 0 && <>{formatPrice(method.Cost)}</>}
                           {method.Cost === 0 && 'Free'}

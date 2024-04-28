@@ -10,10 +10,27 @@ export interface AreaType {
   UpdatedAt: string;
 }
 
+export interface DeliveryType {
+  Id: number;
+  StoreKey: string;
+  DeliveryMethod: string;
+  Cost: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
 export const getShippingMethods = async (): Promise<
   ListResponseType<AreaType>
 > => {
   const response = await ApiClient.get(`/storefront-order/shipping-zones`);
+
+  return response.data;
+};
+
+export const getDevliveryMethods = async (): Promise<
+  ListResponseType<DeliveryType>
+> => {
+  const response = await ApiClient.get(`/storefront-order/delivery-method`);
 
   return response.data;
 };
