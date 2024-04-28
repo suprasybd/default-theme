@@ -16,7 +16,7 @@ const errorResponseHandler = async (error: AxiosError) => {
       // LOGOUT
       cleanRemoveTokens();
       useAuthStore.getState().logout();
-      router.history.push('/login');
+      router.history.push('/');
     }
   }
   return error;
