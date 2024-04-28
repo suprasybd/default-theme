@@ -8,6 +8,24 @@ import {
   getProductSku,
   getProductsDetailsById,
 } from '../products/api';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+
+import { Button, Label } from '@frontend.suprasy.com/ui';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  RadioGroup,
+  RadioGroupItem,
+  FormMessage,
+} from '@frontend.suprasy.com/ui';
+import { Input } from '@frontend.suprasy.com/ui';
+
 import { useQuery } from '@tanstack/react-query';
 import { ProductCartType, useCartStore } from '@web/store/cartStore';
 import {
@@ -17,11 +35,37 @@ import {
   AccordionTrigger,
 } from '@frontend.suprasy.com/ui';
 import { CartItem } from '@web/components/Modals/Cart/Cart';
+import { getShippingMethods } from './api';
+
+const formSchema = z.object({
+  FirstName: z.string().min(2).max(50),
+  LastName: z.string().min(2).max(50),
+  Address: z.string().min(2).max(100),
+  Email: z.string().min(2).max(100),
+  Phone: z.string().min(2).max(100),
+});
 
 const Checkout = () => {
   const { cart, priceMap } = useCartStore((state) => state);
 
-  console.log(priceMap);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {},
+  });
+
+  const { data: shippingMethodsResponse } = useQuery({
+    queryKey: ['getShippingMethods'],
+    queryFn: () => getShippingMethods(),
+  });
+
+  const shippingMethods = shippingMethodsResponse?.Data;
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    // Do something with the form values.
+    // ✅ This will be type-safe and validated.
+    console.log(values);
+  }
+
   const estimatedTotal = useMemo(() => {
     if (priceMap) {
       let estimateTotal = 0;
@@ -56,6 +100,145 @@ const Checkout = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
+
+      {/* devliary form */}
+
+      <div className="my-5">
+        <h1 className="text-2xl font-medium mb-3">Devilery</h1>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="flex w-full gap-[10px]">
+              <FormField
+                control={form.control}
+                name="FirstName"
+                render={({ field }) => (
+                  <FormItem className="!my-[10px] w-full">
+                    <FormLabel>First Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        FormError={!!form.formState.errors.FirstName}
+                        placeholder="First name"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="LastName"
+                render={({ field }) => (
+                  <FormItem className="!my-[10px] w-full">
+                    <FormLabel>Last Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        FormError={!!form.formState.errors.LastName}
+                        placeholder="Last name"
+                        {...field}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="Email"
+              render={({ field }) => (
+                <FormItem className="!my-[10px]">
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      FormError={!!form.formState.errors.Email}
+                      placeholder="Email"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="Phone"
+              render={({ field }) => (
+                <FormItem className="!my-[10px]">
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input
+                      FormError={!!form.formState.errors.Phone}
+                      placeholder="Phone"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="Address"
+              render={({ field }) => (
+                <FormItem className="!my-[10px]">
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <Input
+                      FormError={!!form.formState.errors.Address}
+                      placeholder="Address Example - Dhaka, Mirpur 10, Road #2 , House 29"
+                      {...field}
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <h1 className="text-2xl font-medium mb-3">Shipping Method</h1>
+            {shippingMethods && shippingMethods.length && (
+              <RadioGroup
+                defaultValue={shippingMethods[0].Id.toString()}
+                className="border border-gray-200 rounded-md w-full max-w-[350px] block"
+              >
+                {shippingMethods.map((method) => (
+                  <Label
+                    htmlFor={method.Id.toString()}
+                    className="p-3 w-full !my-0 block  max-w-[350px] bg-white  hover:cursor-pointer border-b border-gray-200"
+                  >
+                    <div className="flex gap-[7px]">
+                      <RadioGroupItem
+                        className=" !my-0 "
+                        value={method.Id.toString()}
+                        id={method.Id.toString()}
+                      />
+                      <div className="flex w-full justify-between">
+                        <h3>{method.Area}</h3>
+                        <p>
+                          {method.Cost !== 0 && <>{formatPrice(method.Cost)}</>}
+                          {method.Cost === 0 && 'Free'}
+                        </p>
+                      </div>
+                    </div>
+                  </Label>
+                ))}
+              </RadioGroup>
+            )}
+
+            <Button type="submit" className="w-full">
+              Place Order
+            </Button>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 };

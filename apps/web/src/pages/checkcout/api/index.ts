@@ -1,0 +1,19 @@
+import ApiClient from '@web/libs/ApiClient';
+import { ListResponseType, ResponseType } from '@web/libs/types/responseTypes';
+
+export interface AreaType {
+  Id: number;
+  StoreKey: string;
+  Area: string;
+  Cost: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export const getShippingMethods = async (): Promise<
+  ListResponseType<AreaType>
+> => {
+  const response = await ApiClient.get(`/storefront-order/shipping-zones`);
+
+  return response.data;
+};
