@@ -10,6 +10,7 @@ import {
   SheetTrigger,
 } from '@frontend.suprasy.com/ui';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { formatPrice } from '@web/libs/helpers/formatPrice';
 import {
   getProductAttributeName,
@@ -83,9 +84,17 @@ const CartModal: React.FC = () => {
             <h1>{formatPrice(estimatedTotal)}</h1>
           </div>
 
-          <Button className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg">
-            Check Out
-          </Button>
+          <Link to="/checkout">
+            <Button
+              onClick={() => {
+                closeModal();
+              }}
+              className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
+            >
+              Check Out{' '}
+            </Button>
+          </Link>
+
           {/* <SheetClose asChild>
             <Button type="submit">Save changes</Button>
           </SheetClose> */}

@@ -11,10 +11,16 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as CheckoutImport } from './routes/checkout'
 import { Route as IndexImport } from './routes/index'
 import { Route as ProductsSlugIndexImport } from './routes/products/$slug/index'
 
 // Create/Update Routes
+
+const CheckoutRoute = CheckoutImport.update({
+  path: '/checkout',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   path: '/',
@@ -34,6 +40,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
+    '/checkout': {
+      preLoaderRoute: typeof CheckoutImport
+      parentRoute: typeof rootRoute
+    }
     '/products/$slug/': {
       preLoaderRoute: typeof ProductsSlugIndexImport
       parentRoute: typeof rootRoute
@@ -45,6 +55,7 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
+  CheckoutRoute,
   ProductsSlugIndexRoute,
 ])
 
