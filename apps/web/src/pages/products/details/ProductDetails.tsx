@@ -26,7 +26,10 @@ import {
 import cn from 'classnames';
 import ProductImages from './components/ProductImages';
 import ProductInfo from './components/ProductInfo';
-import { formatPrice } from '@web/libs/helpers/formatPrice';
+import {
+  calculateDiscountPercentage,
+  formatPrice,
+} from '@web/libs/helpers/formatPrice';
 
 const ProductDetails: React.FC = () => {
   const { slug } = useParams({ strict: false }) as { slug: string };
@@ -100,7 +103,25 @@ const ProductDetails: React.FC = () => {
                     <p className="text-xl font-normal my-3 tracking-wider">
                       {productSku.map((sku) => {
                         if (sku.Id === selectedSku) {
-                          return <div>{formatPrice(sku.Price)}</div>;
+                          return (
+                            <div>
+                              {sku.ShowCompareAtPrice && (
+                                <span className="inline-block mr-3 line-through">
+                                  {formatPrice(sku.CompareAtPrice)}
+                                </span>
+                              )}
+                              {formatPrice(sku.Price)}
+                              {sku.ShowCompareAtPrice && (
+                                <span className="inline-block ml-3 bg-green-500 text-white p-1 text-sm rounded-sm">
+                                  {calculateDiscountPercentage(
+                                    sku.CompareAtPrice,
+                                    sku.Price
+                                  ).toFixed(2)}
+                                  % off
+                                </span>
+                              )}
+                            </div>
+                          );
                         } else {
                           return <></>;
                         }

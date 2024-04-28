@@ -110,6 +110,8 @@ export interface ProductSku {
   AttributeOptionId: number;
   Price: number;
   Sku: string;
+  CompareAtPrice: number;
+  ShowCompareAtPrice: boolean;
   Inventory: number;
   CreatedAt: string;
   UpdatedAt: string;
