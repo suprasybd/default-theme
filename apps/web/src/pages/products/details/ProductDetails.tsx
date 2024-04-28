@@ -156,7 +156,7 @@ const ProductDetails: React.FC = () => {
                           className={cn(
                             'bg-white text-gray-800 border border-gray-600 rounded-sm mr-2 p-2 hover:bg-gray-800 hover:text-white ',
                             attribute.Id === selectedAttribute &&
-                              'bg-gray-800 !text-white'
+                              '!bg-gray-800 !text-white'
                           )}
                           onClick={(e) => {
                             e.preventDefault();

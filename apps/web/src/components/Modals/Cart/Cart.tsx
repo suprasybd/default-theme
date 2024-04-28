@@ -121,7 +121,7 @@ const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
   const productAttributeName = attributeNameResponse?.Data;
   const productAttributeOptions = attributeOptionsResponse?.Data;
   return (
-    <div className="flex">
+    <div className="flex p-2">
       <div className="mr-3">
         {productImages && (
           <div className="w-[60px] h-fit">
@@ -135,57 +135,81 @@ const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
       </div>
 
       <div>
-        <h1>{productDetails?.Title}</h1>
+        <h1 className="text-sm">{productDetails?.Title}</h1>
 
-        {productSku && (
-          <h3>
-            Total Price: {formatPrice(productSku[0].Price * Cart.Quantity)}
-          </h3>
+        {productSku && !productDetails?.HasVariant && (
+          <div>
+            <h3 className="text-sm">
+              Price: {formatPrice(productSku[0].Price)}
+            </h3>
+            <h3 className="text-sm">
+              Total Price: {formatPrice(productSku[0].Price * Cart.Quantity)}
+            </h3>{' '}
+          </div>
         )}
 
-        <span className="block mb-2 font-light">Quantity</span>
-        <div className="flex">
+        {productSku && productDetails?.HasVariant && (
+          <div>
+            {productSku.map((sku) => {
+              if (sku.AttributeOptionId === Cart.ProductAttribute) {
+                return (
+                  <>
+                    <h3 className="text-sm">Price: {formatPrice(sku.Price)}</h3>
+                    <h3 className="text-sm">
+                      Total Price: {formatPrice(sku.Price * Cart.Quantity)}
+                    </h3>{' '}
+                  </>
+                );
+              }
+            })}
+          </div>
+        )}
+
+        <span className="block mb-2 font-light text-sm">Quantity</span>
+        <div className="flex justify-between">
+          <div className="flex">
+            <button
+              className="border border-gray-400 py-2 px-5"
+              onClick={(e) => {
+                e.preventDefault();
+                if (quantity - 1 >= 1) {
+                  setQuantity(Cart.Id || '0', quantity - 1);
+                }
+              }}
+            >
+              -
+            </button>
+            <input
+              onChange={(e) => {
+                setQuantity(Cart.Id || '0', parseInt(e.target.value) || 1);
+              }}
+              type="number"
+              className="border w-[100px] border-gray-400 py-2 px-5"
+              value={quantity}
+              step={'any'}
+            />
+            <button
+              className="border border-gray-400 py-2 px-5"
+              onClick={(e) => {
+                e.preventDefault();
+
+                setQuantity(Cart.Id || '0', quantity + 1);
+              }}
+            >
+              +
+            </button>
+          </div>
+
           <button
-            className="border border-gray-400 py-2 px-5"
-            onClick={(e) => {
-              e.preventDefault();
-              if (quantity - 1 >= 1) {
-                setQuantity(Cart.Id || '0', quantity - 1);
+            onClick={() => {
+              if (Cart.Id) {
+                removeFromCart(Cart.Id);
               }
             }}
           >
-            -
-          </button>
-          <input
-            onChange={(e) => {
-              setQuantity(Cart.Id || '0', parseInt(e.target.value) || 1);
-            }}
-            type="number"
-            className="border w-[100px] border-gray-400 py-2 px-5"
-            value={quantity}
-            step={'any'}
-          />
-          <button
-            className="border border-gray-400 py-2 px-5"
-            onClick={(e) => {
-              e.preventDefault();
-
-              setQuantity(Cart.Id || '0', quantity + 1);
-            }}
-          >
-            +
+            <Trash2 />
           </button>
         </div>
-
-        <button
-          onClick={() => {
-            if (Cart.Id) {
-              removeFromCart(Cart.Id);
-            }
-          }}
-        >
-          <Trash2 />
-        </button>
       </div>
     </div>
   );
