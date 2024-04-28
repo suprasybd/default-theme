@@ -1,7 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import React, { useState } from 'react';
-import { getProductImages, getProductSku, getProductsDetails } from '../api';
+import React, { useEffect, useState } from 'react';
+import {
+  getProductAttributeName,
+  getProductAttributeOptions,
+  getProductImages,
+  getProductSku,
+  getProductsDetails,
+} from '../api';
 import {
   RichTextRender,
   Tabs,
@@ -17,6 +23,7 @@ import {
   CardContent,
   Button,
 } from '@frontend.suprasy.com/ui';
+import cn from 'classnames';
 import ProductImages from './components/ProductImages';
 import ProductInfo from './components/ProductInfo';
 import { formatPrice } from '@web/libs/helpers/formatPrice';
@@ -25,6 +32,7 @@ const ProductDetails: React.FC = () => {
   const { slug } = useParams({ strict: false }) as { slug: string };
 
   const [quantity, setQuantity] = useState<number>(1);
+  const [selectedAttribute, setSelectedAttribute] = useState<number>(0);
 
   const { data: productsDetailsResponse } = useQuery({
     queryKey: ['getProductsDetails', slug],
@@ -46,8 +54,29 @@ const ProductDetails: React.FC = () => {
     enabled: !!productDetails?.Id,
   });
 
+  const { data: attributeNameResponse } = useQuery({
+    queryKey: ['getProductAttributeName', productDetails?.Id],
+    queryFn: () => getProductAttributeName(productDetails?.Id || 0),
+    enabled: productDetails?.HasVariant && !!productDetails?.Id,
+  });
+
+  const { data: attributeOptionsResponse } = useQuery({
+    queryKey: ['getProductAttributeOptions', productDetails?.Id],
+    queryFn: () => getProductAttributeOptions(productDetails?.Id || 0),
+    enabled: productDetails?.HasVariant && !!productDetails?.Id,
+  });
+
   const productImages = productImagesResponse?.Data;
   const productSku = productSkuResponse?.Data;
+  const HasVariant = productDetails?.HasVariant;
+  const productAttributeName = attributeNameResponse?.Data;
+  const productAttributeOptions = attributeOptionsResponse?.Data;
+
+  useEffect(() => {
+    if (productSku) {
+      setSelectedAttribute(productSku[0].AttributeOptionId);
+    }
+  }, [productSku]);
 
   return (
     <section className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -61,7 +90,7 @@ const ProductDetails: React.FC = () => {
             <div className="lg:col-span-2 lg:row-span-2 lg:row-end-2">
               {productDetails && (
                 <div>
-                  <h1 className="text-4xl font-medium">
+                  <h1 className="text-4xl font-normal tracking-wide">
                     {productDetails.Title}
                   </h1>
 
@@ -80,6 +109,35 @@ const ProductDetails: React.FC = () => {
                   </div>
                 </div>
               )}
+
+              {/* has variant? */}
+
+              {HasVariant &&
+                productAttributeName &&
+                productAttributeOptions && (
+                  <div className="my-3">
+                    <span className="block font-light">
+                      {productAttributeName?.Name}
+                    </span>
+                    <div className="my-3">
+                      {productAttributeOptions.map((attribute) => (
+                        <button
+                          className={cn(
+                            'bg-white text-gray-800 border border-gray-600 rounded-sm mr-2 p-2 hover:bg-gray-800 hover:text-white ',
+                            attribute.Id === selectedAttribute &&
+                              'bg-gray-800 !text-white'
+                          )}
+                          onClick={(e) => {
+                            e.preventDefault();
+                          }}
+                          key={attribute.Id}
+                        >
+                          {attribute.Value}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
               <span className="block mb-2 font-light">Quantity</span>
               <div className="flex">

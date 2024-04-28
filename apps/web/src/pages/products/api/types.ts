@@ -114,3 +114,22 @@ export interface ProductSku {
   CreatedAt: string;
   UpdatedAt: string;
 }
+
+export interface AttributeName {
+  Id: number;
+  StoreKey: string;
+  ProductId: number;
+  Name: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface AttributeValue {
+  Id: number;
+  StoreKey: string;
+  AttributeId: number;
+  ProductId: number;
+  Value: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
