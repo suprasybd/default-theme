@@ -16,6 +16,7 @@ export interface CartStoreTypes {
   addToCart: (product: ProductCartType) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
+  setCart: (cart: ProductCartType[]) => void;
   setQuantity: (id: string, quantity: number) => void;
 }
 
@@ -31,6 +32,9 @@ export const useCartStore = create<CartStoreTypes>()(
         ...state,
         priceMap: { ...state.priceMap, [id]: price },
       }));
+    },
+    setCart(cart) {
+      set((state) => ({ ...state, cart: cart as any }));
     },
     removeFromCart(id) {
       set((state) => ({ cart: state.cart.filter((item) => item.Id !== id) }));
