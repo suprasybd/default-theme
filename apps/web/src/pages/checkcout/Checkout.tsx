@@ -247,7 +247,7 @@ const Checkout = () => {
             <h1 className="text-2xl font-medium mb-3">Delivery Method</h1>
             {deliveryMethods && deliveryMethods.length && (
               <RadioGroup
-                defaultValue={deliveryMethods[0].Id.toString()}
+                defaultValue={`${deliveryMethods[0].Id.toString()}delivery`}
                 className="border border-gray-200 rounded-md w-full block"
               >
                 {deliveryMethods.map((method) => (
@@ -273,6 +273,32 @@ const Checkout = () => {
                     </div>
                   </Label>
                 ))}
+              </RadioGroup>
+            )}
+
+            <h1 className="text-2xl font-medium mb-3">Payment</h1>
+            {deliveryMethods && deliveryMethods.length && (
+              <RadioGroup
+                defaultValue={'payment-cod'}
+                className="border border-gray-200 rounded-md w-full block"
+              >
+                <Label
+                  htmlFor={`payment-cod`}
+                  className="p-3 rounded-md py-5 w-full !my-0 block   bg-white  hover:cursor-pointer border-b border-gray-200"
+                >
+                  <div className="flex gap-[7px]">
+                    <RadioGroupItem
+                      className=" !my-0 "
+                      value={`payment-cod`}
+                      id={`payment-cod`}
+                    />
+                    <div className="flex w-full justify-between">
+                      <h3 className="tracking-wide !leading-5">
+                        Cash On Delivery
+                      </h3>
+                    </div>
+                  </div>
+                </Label>
               </RadioGroup>
             )}
 
