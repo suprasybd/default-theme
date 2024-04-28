@@ -25,6 +25,14 @@ export const getProductsDetails = async (
   return response.data;
 };
 
+export const getProductsDetailsById = async (
+  id: string
+): Promise<ResponseType<ProductType>> => {
+  const response = await ApiClient.get(`/storefront-products/product-id/${id}`);
+
+  return response.data;
+};
+
 export const getProductImages = async (
   productId: number
 ): Promise<ListResponseType<ProductImagesTypes>> => {

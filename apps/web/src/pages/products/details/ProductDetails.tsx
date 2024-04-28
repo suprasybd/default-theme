@@ -30,6 +30,7 @@ import {
   calculateDiscountPercentage,
   formatPrice,
 } from '@web/libs/helpers/formatPrice';
+import { useCartStore } from '@web/store/cartStore';
 
 const ProductDetails: React.FC = () => {
   const { slug } = useParams({ strict: false }) as { slug: string };
@@ -38,6 +39,8 @@ const ProductDetails: React.FC = () => {
   const [selectedSku, setSelectedSku] = useState<number>(1);
   const [selectedAttribute, setSelectedAttribute] = useState<number>(0);
 
+  const { addToCart, cart } = useCartStore((state) => state);
+  console.log(cart, 'cart');
   const { data: productsDetailsResponse } = useQuery({
     queryKey: ['getProductsDetails', slug],
     queryFn: () => getProductsDetails(slug),
@@ -207,7 +210,30 @@ const ProductDetails: React.FC = () => {
                 </button>
               </div>
               <div className="my-3">
-                <Button className="w-full my-1 bg-white border-2 border-gray-700 text-black hover:bg-white hover:shadow-lg">
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (productDetails && productDetails?.HasVariant) {
+                      productSku?.forEach((sku) => {
+                        if (sku.Id === selectedSku) {
+                          addToCart({
+                            ProductId: productDetails?.Id,
+                            Quantity: quantity,
+                            ProductAttribute: sku.AttributeOptionId,
+                          });
+                        }
+                      });
+                    }
+
+                    if (productDetails && !productDetails.HasVariant) {
+                      addToCart({
+                        ProductId: productDetails?.Id,
+                        Quantity: quantity,
+                      });
+                    }
+                  }}
+                  className="w-full my-1 bg-white border-2 border-gray-700 text-black hover:bg-white hover:shadow-lg"
+                >
                   Add to cart
                 </Button>
                 <Button className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg">
