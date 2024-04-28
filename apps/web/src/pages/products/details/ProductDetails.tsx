@@ -197,8 +197,8 @@ const ProductDetails: React.FC = () => {
                   onChange={(e) => {
                     setQuantity(parseInt(e.target.value) || 1);
                   }}
-                  type="number"
-                  className="border w-[100px] border-gray-400 py-2 px-5"
+                  type="text"
+                  className="border w-[50px] border-gray-400 text-center"
                   value={quantity}
                   step={'any'}
                 />
