@@ -53,7 +53,6 @@ const Image = ({ attributes, element, children }) => {
             width: '100%', // Keeps the image's aspect ratio
           }}
         />
-        {width} -{height}
       </div>
       {children}
     </div>

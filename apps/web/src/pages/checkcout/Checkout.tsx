@@ -91,7 +91,7 @@ const Checkout = () => {
       <Accordion type="single" defaultValue="item-1" collapsible>
         <AccordionItem value="item-1">
           <AccordionTrigger className="text-3xl font-medium tracking-wider">
-            <div className="flex justify-between w-fullhttp://localhost:4201/products/draft-rpdocut-summary-tdest">
+            <div className="flex justify-between w-full">
               <h2>Order Summary</h2>
               <h2>{formatPrice(estimatedTotal)}</h2>
             </div>
@@ -123,7 +123,7 @@ const Checkout = () => {
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
                       <Input
-                        className="py-5"
+                        className="py-6"
                         FormError={!!form.formState.errors.FirstName}
                         placeholder="First name"
                         {...field}
@@ -142,7 +142,7 @@ const Checkout = () => {
                     <FormLabel>Last Name</FormLabel>
                     <FormControl>
                       <Input
-                        className="py-5"
+                        className="py-6"
                         FormError={!!form.formState.errors.LastName}
                         placeholder="Last name"
                         {...field}
@@ -163,7 +163,7 @@ const Checkout = () => {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
-                      className="py-5"
+                      className="py-6"
                       FormError={!!form.formState.errors.Email}
                       placeholder="Email"
                       {...field}
@@ -183,7 +183,7 @@ const Checkout = () => {
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
                     <Input
-                      className="py-5"
+                      className="py-6"
                       FormError={!!form.formState.errors.Phone}
                       placeholder="Phone"
                       {...field}
