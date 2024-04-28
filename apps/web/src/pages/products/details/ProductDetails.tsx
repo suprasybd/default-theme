@@ -32,6 +32,7 @@ const ProductDetails: React.FC = () => {
   const { slug } = useParams({ strict: false }) as { slug: string };
 
   const [quantity, setQuantity] = useState<number>(1);
+  const [selectedSku, setSelectedSku] = useState<number>(1);
   const [selectedAttribute, setSelectedAttribute] = useState<number>(0);
 
   const { data: productsDetailsResponse } = useQuery({
@@ -75,6 +76,7 @@ const ProductDetails: React.FC = () => {
   useEffect(() => {
     if (productSku) {
       setSelectedAttribute(productSku[0].AttributeOptionId);
+      setSelectedSku(productSku[0].Id);
     }
   }, [productSku]);
 
@@ -96,8 +98,13 @@ const ProductDetails: React.FC = () => {
 
                   {productSku && (
                     <p className="text-xl font-normal my-3 tracking-wider">
-                      {' '}
-                      {formatPrice(productSku[0].Price)}
+                      {productSku.map((sku) => {
+                        if (sku.Id === selectedSku) {
+                          return <div>{formatPrice(sku.Price)}</div>;
+                        } else {
+                          return <></>;
+                        }
+                      })}
                     </p>
                   )}
 
@@ -129,6 +136,12 @@ const ProductDetails: React.FC = () => {
                           )}
                           onClick={(e) => {
                             e.preventDefault();
+                            setSelectedAttribute(attribute.Id);
+                            productSku?.forEach((sku) => {
+                              if (sku.AttributeOptionId === attribute.Id) {
+                                setSelectedSku(sku.Id);
+                              }
+                            });
                           }}
                           key={attribute.Id}
                         >
