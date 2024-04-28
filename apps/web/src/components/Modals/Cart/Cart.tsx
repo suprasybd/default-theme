@@ -21,6 +21,7 @@ import {
 } from '@web/pages/products/api';
 import { ProductCartType, useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
+import { Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 const CartModal: React.FC = () => {
@@ -50,7 +51,7 @@ const CartModal: React.FC = () => {
         }
       }}
     >
-      <SheetContent>
+      <SheetContent className="p-3">
         <SheetHeader>
           <SheetTitle>Cart</SheetTitle>
           <SheetDescription>Add items to cart</SheetDescription>
@@ -79,7 +80,9 @@ interface CartItemPropsTypes {
 }
 
 const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
-  const [quantity, setQuantity] = useState<number>(Cart.Quantity);
+  const quantity = Cart.Quantity;
+  const { removeFromCart, setQuantity } = useCartStore((state) => state);
+
   const { data: productsDetailsResponse } = useQuery({
     queryKey: ['getProductsDetailsByIdCart', Cart.ProductId],
     queryFn: () => getProductsDetailsById(Cart.ProductId.toString() || '0'),
@@ -119,7 +122,7 @@ const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
   const productAttributeOptions = attributeOptionsResponse?.Data;
   return (
     <div className="flex">
-      <div className="p-3 m-3">
+      <div className="mr-3">
         {productImages && (
           <div className="w-[60px] h-fit">
             <img
@@ -147,7 +150,7 @@ const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
             onClick={(e) => {
               e.preventDefault();
               if (quantity - 1 >= 1) {
-                setQuantity(quantity - 1);
+                setQuantity(Cart.Id || '0', quantity - 1);
               }
             }}
           >
@@ -155,7 +158,7 @@ const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
           </button>
           <input
             onChange={(e) => {
-              setQuantity(parseInt(e.target.value) || 1);
+              setQuantity(Cart.Id || '0', parseInt(e.target.value) || 1);
             }}
             type="number"
             className="border w-[100px] border-gray-400 py-2 px-5"
@@ -167,12 +170,22 @@ const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
             onClick={(e) => {
               e.preventDefault();
 
-              setQuantity(quantity + 1);
+              setQuantity(Cart.Id || '0', quantity + 1);
             }}
           >
             +
           </button>
         </div>
+
+        <button
+          onClick={() => {
+            if (Cart.Id) {
+              removeFromCart(Cart.Id);
+            }
+          }}
+        >
+          <Trash2 />
+        </button>
       </div>
     </div>
   );
