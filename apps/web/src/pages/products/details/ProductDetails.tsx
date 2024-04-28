@@ -39,7 +39,11 @@ const ProductDetails: React.FC = () => {
   const [selectedSku, setSelectedSku] = useState<number>(1);
   const [selectedAttribute, setSelectedAttribute] = useState<number>(0);
 
-  const { addToCart, cart } = useCartStore((state) => state);
+  const {
+    addToCart,
+    cart,
+    setQuantity: setQtyCart,
+  } = useCartStore((state) => state);
   console.log(cart, 'cart');
   const { data: productsDetailsResponse } = useQuery({
     queryKey: ['getProductsDetails', slug],
@@ -216,6 +220,26 @@ const ProductDetails: React.FC = () => {
                     if (productDetails && productDetails?.HasVariant) {
                       productSku?.forEach((sku) => {
                         if (sku.Id === selectedSku) {
+                          // if already have increase qty
+                          if (
+                            cart.find(
+                              (c) =>
+                                c.ProductId === sku.ProductId &&
+                                c.ProductAttribute === sku.AttributeOptionId
+                            )
+                          ) {
+                            const theCartItem = cart.find(
+                              (c) =>
+                                c.ProductId === sku.ProductId &&
+                                c.ProductAttribute === sku.AttributeOptionId
+                            );
+                            setQtyCart(
+                              theCartItem?.Id || '0',
+                              (theCartItem?.Quantity || 0) + 1
+                            );
+                            return;
+                          }
+                          // if not already in cart add it
                           addToCart({
                             ProductId: productDetails?.Id,
                             Quantity: quantity,
@@ -226,6 +250,18 @@ const ProductDetails: React.FC = () => {
                     }
 
                     if (productDetails && !productDetails.HasVariant) {
+                      // if already have increase qty
+                      if (cart.find((c) => c.ProductId === productDetails.Id)) {
+                        const theCartItem = cart.find(
+                          (c) => c.ProductId === productDetails.Id
+                        );
+                        setQtyCart(
+                          theCartItem?.Id || '0',
+                          (theCartItem?.Quantity || 0) + 1
+                        );
+                        return;
+                      }
+                      // if not already in cart add it
                       addToCart({
                         ProductId: productDetails?.Id,
                         Quantity: quantity,
