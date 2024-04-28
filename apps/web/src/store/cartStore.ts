@@ -11,6 +11,8 @@ export interface ProductCartType {
 
 export interface CartStoreTypes {
   cart: ProductCartType[];
+  priceMap: Record<string, number>;
+  setPriceMap: (id: string, price: number) => void;
   addToCart: (product: ProductCartType) => void;
   removeFromCart: (id: string) => void;
   clearCart: () => void;
@@ -20,8 +22,15 @@ export interface CartStoreTypes {
 export const useCartStore = create<CartStoreTypes>()(
   devtools((set) => ({
     cart: [],
+    priceMap: {},
     addToCart(product) {
       set((state) => ({ cart: [...state.cart, { ...product, Id: uuid() }] }));
+    },
+    setPriceMap(id, price) {
+      set((state) => ({
+        ...state,
+        priceMap: { ...state.priceMap, [id]: price },
+      }));
     },
     removeFromCart(id) {
       set((state) => ({ cart: state.cart.filter((item) => item.Id !== id) }));

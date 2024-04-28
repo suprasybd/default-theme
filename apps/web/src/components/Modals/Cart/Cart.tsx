@@ -22,7 +22,7 @@ import {
 import { ProductCartType, useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
 import { Trash2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 const CartModal: React.FC = () => {
   const { modal, clearModalPath } = useModalStore((state) => state);
@@ -40,7 +40,19 @@ const CartModal: React.FC = () => {
     clearModalPath();
   };
 
-  const { cart } = useCartStore((state) => state);
+  const { cart, priceMap } = useCartStore((state) => state);
+
+  const estimatedTotal = useMemo(() => {
+    if (priceMap) {
+      let estimateTotal = 0;
+      Object.keys(priceMap).forEach((key) => {
+        estimateTotal += priceMap[key];
+      });
+      return estimateTotal;
+    } else {
+      return 0;
+    }
+  }, [priceMap]);
 
   return (
     <Sheet
@@ -51,7 +63,7 @@ const CartModal: React.FC = () => {
         }
       }}
     >
-      <SheetContent className="p-3">
+      <SheetContent className="p-3 overflow-auto">
         <SheetHeader>
           <SheetTitle>Cart</SheetTitle>
           <SheetDescription>Add items to cart</SheetDescription>
@@ -65,11 +77,19 @@ const CartModal: React.FC = () => {
             </div>
           )}
         </div>
-        <SheetFooter>
-          <SheetClose asChild>
+        <div>
+          <div className="flex justify-between mt-3">
+            <h1>Estimated Total</h1>
+            <h1>{formatPrice(estimatedTotal)}</h1>
+          </div>
+
+          <Button className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg">
+            Check Out
+          </Button>
+          {/* <SheetClose asChild>
             <Button type="submit">Save changes</Button>
-          </SheetClose>
-        </SheetFooter>
+          </SheetClose> */}
+        </div>
       </SheetContent>
     </Sheet>
   );
@@ -81,7 +101,9 @@ interface CartItemPropsTypes {
 
 const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
   const quantity = Cart.Quantity;
-  const { removeFromCart, setQuantity } = useCartStore((state) => state);
+  const { removeFromCart, setQuantity, setPriceMap } = useCartStore(
+    (state) => state
+  );
 
   const { data: productsDetailsResponse } = useQuery({
     queryKey: ['getProductsDetailsByIdCart', Cart.ProductId],
@@ -120,6 +142,21 @@ const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
   const HasVariant = productDetails?.HasVariant;
   const productAttributeName = attributeNameResponse?.Data;
   const productAttributeOptions = attributeOptionsResponse?.Data;
+
+  useEffect(() => {
+    if (!HasVariant && productDetails && productSku) {
+      setPriceMap(Cart.Id || '', productSku[0].Price * Cart.Quantity);
+    }
+
+    if (HasVariant && productDetails && productSku) {
+      productSku.map((sku) => {
+        if (sku.AttributeOptionId === Cart.ProductAttribute) {
+          setPriceMap(Cart.Id || '', sku.Price * Cart.Quantity);
+        }
+      });
+    }
+  }, [HasVariant, productDetails, productSku, Cart, setPriceMap]);
+
   return (
     <div className="flex p-2">
       <div className="mr-3">
