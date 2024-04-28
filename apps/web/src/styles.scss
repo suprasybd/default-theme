@@ -12,6 +12,11 @@ body {
   all: initial;
 }
 
+.none-app {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

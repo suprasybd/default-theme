@@ -12,7 +12,7 @@ import {
 } from 'slate';
 import { withHistory } from 'slate-history';
 import { Editable, Slate, withReact } from 'slate-react';
-
+import cn from 'classnames';
 import withTable from './Plugins/withTable';
 
 const HOTKEYS = {
@@ -27,7 +27,8 @@ const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
 
 export const RichTextRender: React.FC<{
   initialVal?: string;
-}> = ({ initialVal }) => {
+  className?: string;
+}> = ({ initialVal, className }) => {
   const renderElement = useCallback((props) => <Element {...props} />, []);
   const renderLeaf = useCallback((props) => <Leaf {...props} />, []);
   const editor = useMemo(
@@ -41,7 +42,7 @@ export const RichTextRender: React.FC<{
     <Slate editor={editor} initialValue={initVal || initialValue}>
       <Editable
         readOnly
-        className="min-h-[200px]"
+        className={cn('min-h-[200px]', className)}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         placeholder="Enter some rich text…"

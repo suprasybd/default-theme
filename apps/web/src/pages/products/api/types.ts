@@ -6,6 +6,7 @@ export interface ProductType {
   Slug: string;
   Title: string;
   Description: string;
+  Summary: string;
   IsActive: boolean;
   CreatedAt: string;
   UpdatedAt: string;
@@ -98,6 +99,18 @@ export interface StorefrontOptionsValue {
   StoreKey: string;
   OptionId: number;
   Value: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface ProductSku {
+  Id: number;
+  StoreKey: string;
+  ProductId: number;
+  AttributeOptionId: number;
+  Price: number;
+  Sku: string;
+  Inventory: number;
   CreatedAt: string;
   UpdatedAt: string;
 }
