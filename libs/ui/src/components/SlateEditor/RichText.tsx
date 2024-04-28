@@ -14,6 +14,8 @@ import { withHistory } from 'slate-history';
 import { Editable, Slate, withReact } from 'slate-react';
 import cn from 'classnames';
 import withTable from './Plugins/withTable';
+import Image from './Elements/Embed/Image';
+import Video from './Elements/Embed/Video';
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -203,6 +205,10 @@ const Element = (props) => {
           {children}
         </td>
       );
+    case 'image':
+      return <Image {...props} />;
+    case 'video':
+      return <Video {...props} />;
     default:
       return (
         <p style={style} {...attributes}>
