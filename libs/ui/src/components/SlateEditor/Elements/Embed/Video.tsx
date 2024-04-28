@@ -65,22 +65,6 @@ const Video = ({ attributes, element, children }) => {
             <iframe src={url} frameBorder="0" title={alt} />
           )
         }
-        {true && (
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-            }}
-            onMouseDown={onMouseDown}
-            style={{
-              width: '15px',
-              height: '15px',
-              opacity: 1,
-              background: 'transparent',
-            }}
-          >
-            <Scale3D className="text-red-500" />
-          </button>
-        )}
       </div>
       {children}
     </div>
