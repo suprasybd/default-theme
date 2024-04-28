@@ -165,6 +165,20 @@ const CartItem: React.FC<CartItemPropsTypes> = ({ Cart }) => {
           </div>
         )}
 
+        {productDetails?.HasVariant && (
+          <div>
+            <span className="block mb-2 font-light text-sm">
+              {productAttributeName?.Name}:{' '}
+              {productAttributeOptions &&
+                productAttributeOptions.map((attribute) => {
+                  if (attribute.Id === Cart.ProductAttribute) {
+                    return attribute.Value;
+                  }
+                })}
+            </span>
+          </div>
+        )}
+
         <span className="block mb-2 font-light text-sm">Quantity</span>
         <div className="flex justify-between">
           <div className="flex">
