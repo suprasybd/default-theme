@@ -46,6 +46,7 @@ export const useCartStore = create<CartStoreTypes>()(
       });
     },
     clearCart() {
+      localStorage.removeItem('CartData');
       set({ cart: [] });
     },
     setQuantity(id, quantity) {
