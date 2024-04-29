@@ -37,7 +37,13 @@ export const useCartStore = create<CartStoreTypes>()(
       set((state) => ({ ...state, cart: cart as any }));
     },
     removeFromCart(id) {
-      set((state) => ({ cart: state.cart.filter((item) => item.Id !== id) }));
+      set((state) => {
+        const afterRemove = state.cart.filter((item) => item.Id !== id);
+        if (afterRemove.length === 0) {
+          localStorage.removeItem('CartData');
+        }
+        return { cart: state.cart.filter((item) => item.Id !== id) };
+      });
     },
     clearCart() {
       set({ cart: [] });

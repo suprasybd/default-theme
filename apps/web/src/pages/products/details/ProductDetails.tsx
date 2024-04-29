@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from '@tanstack/react-router';
+import { redirect, useNavigate, useParams } from '@tanstack/react-router';
 import React, { useEffect, useState } from 'react';
 import {
   getProductAttributeName,
@@ -43,6 +43,7 @@ const ProductDetails: React.FC = () => {
     addToCart,
     cart,
     setQuantity: setQtyCart,
+    clearCart,
   } = useCartStore((state) => state);
   console.log(cart, 'cart');
   const { data: productsDetailsResponse } = useQuery({
@@ -89,6 +90,8 @@ const ProductDetails: React.FC = () => {
       setSelectedSku(productSku[0].Id);
     }
   }, [productSku]);
+
+  const navigate = useNavigate();
 
   return (
     <section className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -272,7 +275,67 @@ const ProductDetails: React.FC = () => {
                 >
                   Add to cart
                 </Button>
-                <Button className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg">
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    clearCart();
+
+                    if (productDetails && productDetails?.HasVariant) {
+                      productSku?.forEach((sku) => {
+                        if (sku.Id === selectedSku) {
+                          // if already have increase qty
+                          if (
+                            cart.find(
+                              (c) =>
+                                c.ProductId === sku.ProductId &&
+                                c.ProductAttribute === sku.AttributeOptionId
+                            )
+                          ) {
+                            const theCartItem = cart.find(
+                              (c) =>
+                                c.ProductId === sku.ProductId &&
+                                c.ProductAttribute === sku.AttributeOptionId
+                            );
+                            setQtyCart(
+                              theCartItem?.Id || '0',
+                              (theCartItem?.Quantity || 0) + 1
+                            );
+                            return;
+                          }
+                          // if not already in cart add it
+                          addToCart({
+                            ProductId: productDetails?.Id,
+                            Quantity: quantity,
+                            ProductAttribute: sku.AttributeOptionId,
+                          });
+                        }
+                      });
+                    }
+
+                    if (productDetails && !productDetails.HasVariant) {
+                      // if already have increase qty
+                      if (cart.find((c) => c.ProductId === productDetails.Id)) {
+                        const theCartItem = cart.find(
+                          (c) => c.ProductId === productDetails.Id
+                        );
+                        setQtyCart(
+                          theCartItem?.Id || '0',
+                          (theCartItem?.Quantity || 0) + 1
+                        );
+                        return;
+                      }
+                      // if not already in cart add it
+                      addToCart({
+                        ProductId: productDetails?.Id,
+                        Quantity: quantity,
+                      });
+                    }
+
+                    // redirect to checkout
+                    navigate({ to: '/checkout' });
+                  }}
+                  className="w-full my-1 bg-green-500 hover:bg-green-500 hover:shadow-lg"
+                >
                   Buy it now
                 </Button>
               </div>

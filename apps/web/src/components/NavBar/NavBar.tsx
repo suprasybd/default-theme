@@ -52,6 +52,23 @@ const NavBar: React.FC = () => {
           </button>
         </div>
       </div>
+      <div className="flex mt-10 w-full gap-[30px] justify-center font-light ">
+        <Link to="/checkout" className="hover:underline hover:font-normal">
+          T-Shirt
+        </Link>
+        <Link to="/checkout" className="hover:underline hover:font-normal">
+          Joggers
+        </Link>
+        <Link to="/checkout" className="hover:underline hover:font-normal">
+          Half Sleve
+        </Link>
+        <Link to="/checkout" className="hover:underline hover:font-normal">
+          Kabil Set
+        </Link>
+        <Link to="/checkout" className="hover:underline hover:font-normal">
+          Chinos & Jeans
+        </Link>
+      </div>
     </div>
   );
 };
