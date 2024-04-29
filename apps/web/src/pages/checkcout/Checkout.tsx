@@ -36,6 +36,8 @@ import {
 } from '@frontend.suprasy.com/ui';
 import { CartItem } from '@web/components/Modals/Cart/Cart';
 import { getDevliveryMethods, getShippingMethods, placeOrderPost } from './api';
+import FullScreenLoader from '@web/components/Loader/Loader';
+import { Link } from '@tanstack/react-router';
 
 const orderProducts = z.object({
   ProductId: z.number(),
@@ -56,7 +58,7 @@ export const formSchemaCheckout = z.object({
 });
 
 const Checkout = () => {
-  const { cart, priceMap } = useCartStore((state) => state);
+  const { cart, priceMap, clearCart } = useCartStore((state) => state);
 
   const [selectedShippingMethod, setSelectedShippingMethod] =
     useState<number>(0);
@@ -68,8 +70,16 @@ const Checkout = () => {
     defaultValues: {},
   });
 
-  const { mutate: handlePlaceOrder } = useMutation({
+  const {
+    mutate: handlePlaceOrder,
+    isPending,
+    isSuccess,
+    data,
+  } = useMutation({
     mutationFn: placeOrderPost,
+    onSuccess: () => {
+      clearCart();
+    },
   });
 
   const { data: shippingMethodsResponse } = useQuery({
@@ -144,6 +154,30 @@ const Checkout = () => {
       return 0;
     }
   }, [priceMap]);
+
+  if (isSuccess) {
+    return (
+      <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
+        <div className="flex justify-center items-center w-full h-[80vh]">
+          <div>
+            <h1 className="text-4xl font-medium">
+              Your order has been placed!
+            </h1>
+            {data?.Data?.Password && (
+              <div className="text-center mt-5">
+                Your generated account is bellow:
+                <p>Email: {form.getValues('Email')}</p>
+                <p>Password: {data.Data.Password}</p>
+              </div>
+            )}
+            <Link to="/">
+              <Button className="w-full my-10">Continute Shoping</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
@@ -377,6 +411,7 @@ const Checkout = () => {
             </Button>
           </form>
         </Form>
+        {isPending && <FullScreenLoader />}
       </div>
     </div>
   );
