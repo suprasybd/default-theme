@@ -1,6 +1,7 @@
 import ApiClient from '@web/libs/ApiClient';
 import { ListResponseType, ResponseType } from '@web/libs/types/responseTypes';
-
+import { z } from 'zod';
+import { formSchemaCheckout } from '../Checkout';
 export interface AreaType {
   Id: number;
   StoreKey: string;
@@ -31,6 +32,14 @@ export const getDevliveryMethods = async (): Promise<
   ListResponseType<DeliveryType>
 > => {
   const response = await ApiClient.get(`/storefront-order/delivery-method`);
+
+  return response.data;
+};
+
+export const placeOrderPost = async (
+  data: z.infer<typeof formSchemaCheckout>
+): Promise<ResponseType<string>> => {
+  const response = await ApiClient.post('/storefront-order/place-order', data);
 
   return response.data;
 };

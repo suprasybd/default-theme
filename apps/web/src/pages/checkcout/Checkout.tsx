@@ -1,6 +1,6 @@
 import { formatPrice } from '@web/libs/helpers/formatPrice';
 import { Trash2 } from 'lucide-react';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   getProductAttributeName,
   getProductAttributeOptions,
@@ -26,7 +26,7 @@ import {
 } from '@frontend.suprasy.com/ui';
 import { Input } from '@frontend.suprasy.com/ui';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { ProductCartType, useCartStore } from '@web/store/cartStore';
 import {
   Accordion,
@@ -35,22 +35,41 @@ import {
   AccordionTrigger,
 } from '@frontend.suprasy.com/ui';
 import { CartItem } from '@web/components/Modals/Cart/Cart';
-import { getDevliveryMethods, getShippingMethods } from './api';
+import { getDevliveryMethods, getShippingMethods, placeOrderPost } from './api';
 
-const formSchema = z.object({
-  FirstName: z.string().min(2).max(50),
-  LastName: z.string().min(2).max(50),
+const orderProducts = z.object({
+  ProductId: z.number(),
+  Quantity: z.number(),
+  AttributeOptionsId: z.number().optional(),
+});
+
+export const formSchemaCheckout = z.object({
+  FirstName: z.string().min(1).max(50),
+  LastName: z.string().min(1).max(50),
   Address: z.string().min(2).max(100),
-  Email: z.string().min(2).max(100),
+  Email: z.string().email().min(2).max(100),
   Phone: z.string().min(2).max(100),
+  DeliveryMethodId: z.number(),
+  ShippingMethodId: z.number(),
+  PaymentType: z.string().min(1).max(100).default('cod'),
+  Products: z.array(orderProducts).min(1).max(10),
 });
 
 const Checkout = () => {
   const { cart, priceMap } = useCartStore((state) => state);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [selectedShippingMethod, setSelectedShippingMethod] =
+    useState<number>(0);
+  const [selectedDeliveryMethod, setSelectedDeliveryMethod] =
+    useState<number>(0);
+
+  const form = useForm<z.infer<typeof formSchemaCheckout>>({
+    resolver: zodResolver(formSchemaCheckout),
     defaultValues: {},
+  });
+
+  const { mutate: handlePlaceOrder } = useMutation({
+    mutationFn: placeOrderPost,
   });
 
   const { data: shippingMethodsResponse } = useQuery({
@@ -66,10 +85,52 @@ const Checkout = () => {
   const shippingMethods = shippingMethodsResponse?.Data;
   const deliveryMethods = deliveryMethodsResponse?.Data;
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  useEffect(() => {
+    if (shippingMethods && shippingMethods.length) {
+      setSelectedShippingMethod(shippingMethods[0].Id);
+    }
+
+    if (deliveryMethods && deliveryMethods.length) {
+      setSelectedDeliveryMethod(deliveryMethods[0].Id);
+    }
+  }, [deliveryMethods, shippingMethods]);
+
+  useEffect(() => {
+    if (selectedDeliveryMethod) {
+      form.setValue('DeliveryMethodId', selectedDeliveryMethod);
+    }
+
+    if (selectedShippingMethod) {
+      form.setValue('ShippingMethodId', selectedShippingMethod);
+    }
+  }, [selectedDeliveryMethod, selectedShippingMethod]);
+
+  useEffect(() => {
+    if (cart && cart.length) {
+      const formatedCart = cart.map((cartItem) => {
+        if (cartItem.ProductAttribute) {
+          return {
+            ProductId: cartItem.ProductId,
+            Quantity: cartItem.Quantity,
+            AttributeOptionsId: cartItem.ProductAttribute,
+          };
+        } else {
+          return {
+            ProductId: cartItem.ProductId,
+            Quantity: cartItem.Quantity,
+          };
+        }
+      });
+
+      form.setValue('Products', formatedCart);
+    }
+  }, [cart]);
+
+  function onSubmit(values: z.infer<typeof formSchemaCheckout>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
+    handlePlaceOrder(values);
   }
 
   const estimatedTotal = useMemo(() => {
@@ -163,6 +224,7 @@ const Checkout = () => {
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
+                      type="email"
                       className="py-6"
                       FormError={!!form.formState.errors.Email}
                       placeholder="Email"
@@ -217,6 +279,9 @@ const Checkout = () => {
             <h1 className="text-2xl font-medium mb-3">Shipping Method</h1>
             {shippingMethods && shippingMethods.length && (
               <RadioGroup
+                onValueChange={(val) => {
+                  setSelectedShippingMethod(parseInt(val));
+                }}
                 defaultValue={shippingMethods[0].Id.toString()}
                 className="border border-gray-200 rounded-md w-full  block"
               >
@@ -247,6 +312,11 @@ const Checkout = () => {
             <h1 className="text-2xl font-medium mb-3">Delivery Method</h1>
             {deliveryMethods && deliveryMethods.length && (
               <RadioGroup
+                onValueChange={(val) => {
+                  setSelectedDeliveryMethod(
+                    parseInt(val.replace(/delivery/g, ''))
+                  );
+                }}
                 defaultValue={`${deliveryMethods[0].Id.toString()}delivery`}
                 className="border border-gray-200 rounded-md w-full block"
               >
