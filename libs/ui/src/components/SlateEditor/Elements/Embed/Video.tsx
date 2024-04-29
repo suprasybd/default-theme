@@ -7,7 +7,6 @@ import {
 } from 'slate-react';
 
 import useResize from '../../utils/customHooks/useResize.ts';
-import { Scale3D } from 'lucide-react';
 import { Transforms } from 'slate';
 // import "./Video.css";
 
@@ -20,30 +19,34 @@ const Video = ({ attributes, element, children }) => {
   const editor = useSlateStatic();
 
   // Persist width and height when size changes
-  React.useEffect(() => {
-    if (true) {
-      const path = ReactEditor.findPath(editor, element);
-      console.log('nodes path', path);
-      Transforms.setNodes(
-        editor,
-        { width: size.width, height: size.height },
-        { at: path }
-      );
-    }
-  }, [size]);
+  useEffect(() => {
+    const path = ReactEditor.findPath(editor, element);
+    Transforms.setNodes(
+      editor,
+      { width: size.width, height: size.height },
+      { at: path }
+    );
+  }, [size, editor, element]);
+
   return (
     <div
       {...attributes}
-      className="embed"
+      className="embed !w-full h-full"
       style={{
         display: 'flex',
         boxShadow: selected && focused && '0 0 3px 3px lightgray',
+        height: `${size.height}px`,
       }}
       {...element.attr}
     >
       <div
         contentEditable={false}
-        style={{ width: `${size.width}px`, height: `${size.height}px` }}
+        style={{
+          maxWidth: `${size.width}px`,
+          maxHeight: `${size.height}px`,
+          width: '100%',
+          height: '100%',
+        }}
       >
         {
           // The iframe reloads on each re-render and hence it stutters and the document doesn't detect mouse-up event leading to unwanted behaviour
@@ -62,7 +65,15 @@ const Video = ({ attributes, element, children }) => {
               video player icon
             </div>
           ) : (
-            <iframe src={url} frameBorder="0" title={alt} />
+            <iframe
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              src={url}
+              frameBorder="0"
+              title={alt}
+            />
           )
         }
       </div>

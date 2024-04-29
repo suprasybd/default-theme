@@ -52,7 +52,7 @@ const CartModal: React.FC = () => {
       // load from local storage if found in localstorage
       if (localStorage.getItem('CartData')) {
         const parsed = JSON.parse(localStorage.getItem('CartData') || '');
-        if (parsed) {
+        if (parsed && parsed.length) {
           setCart(parsed);
         }
       }

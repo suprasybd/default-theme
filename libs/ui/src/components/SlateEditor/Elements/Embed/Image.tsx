@@ -43,14 +43,20 @@ const Image = ({ attributes, element, children }) => {
     >
       <div
         contentEditable={false}
-        style={{ width: `${size.width}px`, height: `${size.height}px` }}
+        style={{
+          // maxWidth: '100%',
+          // maxHeight: '100%',
+          maxWidth: `${size.width}px`,
+          maxHeight: `${size.height}px`,
+          overflow: 'hidden',
+        }}
       >
         <img
           alt={alt}
           src={url}
           style={{
-            maxHeight: '100%', // Ensures the image doesn't exceed the height of the div
-            width: '100%', // Keeps the image's aspect ratio
+            width: '100%',
+            height: '100%',
           }}
         />
       </div>
