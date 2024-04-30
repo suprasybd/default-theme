@@ -1,12 +1,20 @@
+import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useCartStore } from '@web/store/cartStore';
 import { useModalStore } from '@web/store/modalStore';
 import { Search, ShoppingBag, ShoppingCart, User } from 'lucide-react';
 import React, { useMemo } from 'react';
+import { getCategories } from './api';
 
 const NavBar: React.FC = () => {
   const { setModalPath } = useModalStore((state) => state);
   const { cart } = useCartStore((state) => state);
+
+  const { data: catagoriesResponse } = useQuery({
+    queryFn: () => getCategories(),
+    queryKey: ['getCategoriesResponse'],
+  });
+  const categories = catagoriesResponse?.Data;
 
   const totalCartQuantity = useMemo(() => {
     if (cart) {
@@ -53,21 +61,16 @@ const NavBar: React.FC = () => {
         </div>
       </div>
       <div className="flex mt-10 w-full gap-[30px] justify-center font-light ">
-        <Link to="/checkout" className="hover:underline hover:font-normal">
-          T-Shirt
-        </Link>
-        <Link to="/checkout" className="hover:underline hover:font-normal">
-          Joggers
-        </Link>
-        <Link to="/checkout" className="hover:underline hover:font-normal">
-          Half Sleve
-        </Link>
-        <Link to="/checkout" className="hover:underline hover:font-normal">
-          Kabil Set
-        </Link>
-        <Link to="/checkout" className="hover:underline hover:font-normal">
-          Chinos & Jeans
-        </Link>
+        {categories &&
+          categories.length &&
+          categories.map((category) => (
+            <Link
+              to={'/category/' + category.Name}
+              className="hover:underline hover:font-normal"
+            >
+              {category.Name}
+            </Link>
+          ))}
       </div>
     </div>
   );
