@@ -45,7 +45,7 @@ const SectionProducts: React.FC<{ sectionId: number }> = ({ sectionId }) => {
   const sectionProducts = sectionProductsResponse?.Data;
 
   return (
-    <div className="flex gap-[30px] flex-wrap w-full my-10">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 my-10 ">
       {sectionProducts &&
         sectionProducts.length &&
         sectionProducts.map((products) => (
