@@ -53,7 +53,7 @@ const ProductCard: React.FC<{ ProductId: number }> = ({ ProductId }) => {
   const productAttributeOptions = attributeOptionsResponse?.Data;
 
   return (
-    <div className="max-w-[274px] h-[424px]">
+    <div className="max-w-[274px] h-[424px] hover:cursor-pointer">
       <div className="rounded-md overflow-hidden  relative">
         {productSku &&
           productSku.length > 0 &&
