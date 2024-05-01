@@ -25,6 +25,18 @@ export const getProductsDetails = async (
   return response.data;
 };
 
+export const getProductsList = async (Queries: {
+  [key: string]: any;
+  Page?: number;
+  Limit?: number;
+}): Promise<ListResponseType<ProductType>> => {
+  const response = await ApiClient.get('/storefront-products/all', {
+    params: Queries,
+  });
+
+  return response.data;
+};
+
 export const getProductsDetailsById = async (
   id: string
 ): Promise<ResponseType<ProductType>> => {
