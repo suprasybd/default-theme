@@ -11,12 +11,24 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SignupImport } from './routes/signup'
+import { Route as LoginImport } from './routes/login'
 import { Route as CheckoutImport } from './routes/checkout'
 import { Route as IndexImport } from './routes/index'
-import { Route as CategoryNameIndexImport } from './routes/category/$name/index'
 import { Route as ProductsSlugIndexImport } from './routes/products/$slug/index'
+import { Route as CategoryNameIndexImport } from './routes/category/$name/index'
 
 // Create/Update Routes
+
+const SignupRoute = SignupImport.update({
+  path: '/signup',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LoginRoute = LoginImport.update({
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const CheckoutRoute = CheckoutImport.update({
   path: '/checkout',
@@ -28,13 +40,13 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const CategoryNameIndexRoute = CategoryNameIndexImport.update({
-  path: '/category/$name/',
+const ProductsSlugIndexRoute = ProductsSlugIndexImport.update({
+  path: '/products/$slug/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const ProductsSlugIndexRoute = ProductsSlugIndexImport.update({
-  path: '/products/$slug/',
+const CategoryNameIndexRoute = CategoryNameIndexImport.update({
+  path: '/category/$name/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -50,12 +62,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutImport
       parentRoute: typeof rootRoute
     }
-    '/products/$slug/': {
-      preLoaderRoute: typeof ProductsSlugIndexImport
+    '/login': {
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/signup': {
+      preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
     '/category/$name/': {
       preLoaderRoute: typeof CategoryNameIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/products/$slug/': {
+      preLoaderRoute: typeof ProductsSlugIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -66,8 +86,10 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
   CheckoutRoute,
-  ProductsSlugIndexRoute,
+  LoginRoute,
+  SignupRoute,
   CategoryNameIndexRoute,
+  ProductsSlugIndexRoute,
 ])
 
 /* prettier-ignore-end */

@@ -40,9 +40,11 @@ const NavBar: React.FC = () => {
           </Link>
         </div>
         <div className="flex gap-[20px]">
+          <Link to='/login'>
           <button>
             <User strokeWidth={'1px'} />
           </button>
+          </Link>
 
           <button
             className="relative"
