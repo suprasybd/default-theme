@@ -16,7 +16,6 @@ const Home = () => {
   return (
     <div className="w-full max-w-[1220px] min-h-full mx-auto gap-6 py-6 px-4 sm:px-8">
       <Discount />
-
       {homeSesctions &&
         homeSesctions.length > 0 &&
         homeSesctions.map((section) => (
@@ -32,6 +31,8 @@ const Home = () => {
             </div>
           </div>
         ))}
+
+       
     </div>
   );
 };
