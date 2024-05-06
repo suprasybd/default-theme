@@ -13,8 +13,8 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as CheckoutImport } from './routes/checkout'
 import { Route as IndexImport } from './routes/index'
-import { Route as CategoryNameIndexImport } from './routes/category/$name/index'
 import { Route as ProductsSlugIndexImport } from './routes/products/$slug/index'
+import { Route as CategoryNameIndexImport } from './routes/category/$name/index'
 
 // Create/Update Routes
 
@@ -28,13 +28,13 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const CategoryNameIndexRoute = CategoryNameIndexImport.update({
-  path: '/category/$name/',
+const ProductsSlugIndexRoute = ProductsSlugIndexImport.update({
+  path: '/products/$slug/',
   getParentRoute: () => rootRoute,
 } as any)
 
-const ProductsSlugIndexRoute = ProductsSlugIndexImport.update({
-  path: '/products/$slug/',
+const CategoryNameIndexRoute = CategoryNameIndexImport.update({
+  path: '/category/$name/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -50,12 +50,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutImport
       parentRoute: typeof rootRoute
     }
-    '/products/$slug/': {
-      preLoaderRoute: typeof ProductsSlugIndexImport
-      parentRoute: typeof rootRoute
-    }
     '/category/$name/': {
       preLoaderRoute: typeof CategoryNameIndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/products/$slug/': {
+      preLoaderRoute: typeof ProductsSlugIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -66,8 +66,8 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren([
   IndexRoute,
   CheckoutRoute,
-  ProductsSlugIndexRoute,
   CategoryNameIndexRoute,
+  ProductsSlugIndexRoute,
 ])
 
 /* prettier-ignore-end */
