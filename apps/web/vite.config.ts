@@ -28,6 +28,11 @@ export default defineConfig({
   build: {
     outDir: '../../dist/apps/web',
     reportCompressedSize: true,
+    rollupOptions: {
+      output: {
+        entryFileNames: 'index.js',
+      },
+    },
     commonjsOptions: {
       transformMixedEsModules: true,
     },
